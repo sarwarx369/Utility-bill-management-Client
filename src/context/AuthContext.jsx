@@ -1,30 +1,48 @@
-import { createContext, useState, useEffect } from "react";
-import API from "../utils/API";
+import React, { createContext, useEffect, useState } from "react";
+
+import API from "../api/Api";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  });
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) setUser({ token });
-  }, []);
+    if (token) {
+      localStorage.setItem("token", token);
+      API.defaults.headers.common["Authorization"] = "Bearer " + token;
+    } else {
+      localStorage.removeItem("token");
+      delete API.defaults.headers.common["Authorization"];
+    }
+  }, [token]);
 
-  const login = async (email, password) => {
-    const res = await API.post("/auth/login", { email, password });
-    localStorage.setItem("token", res.data.token);
-    setUser(res.data.user);
+  useEffect(() => {
+    if (user) localStorage.setItem("user", JSON.stringify(user));
+    else localStorage.removeItem("user");
+  }, [user]);
+
+  // login expects object { token, user } from backend
+  const login = ({ token, user }) => {
+    setToken(token);
+    setUser(user);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    setToken(null);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}

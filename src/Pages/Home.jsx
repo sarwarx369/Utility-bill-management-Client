@@ -1,7 +1,16 @@
-import React from "react";
+import Slider from "../components/Slider";
 
-const Home = () => {
-  return <div>home</div>;
-};
-
-export default Home;
+export default function Home() {
+  return (
+    <div className="p-6 text-center">
+      <Slider />
+      <h2 className="text-2xl font-bold mt-6">
+        Welcome to Utility Bill Management
+      </h2>
+      <p className="text-gray-600 mt-2">
+        Manage and pay your monthly Electricity, Gas, Water, and Internet bills
+        easily.
+      </p>
+    </div>
+  );
+}
