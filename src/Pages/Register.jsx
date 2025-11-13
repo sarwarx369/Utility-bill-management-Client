@@ -1,7 +1,8 @@
 import React, { useState, useContext } from "react";
-import api from "../lib/api";
+
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import API from "../api/Api";
 
 export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -16,7 +17,7 @@ export default function Register() {
     setError(null);
 
     try {
-      const data = await api.post("/auth/register", form);
+      const data = await API.post("/auth/register", form);
       // expected backend response: { token, user }
       if (data?.token && data?.user) {
         login({ token: data.token, user: data.user });

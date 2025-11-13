@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import api from "../lib/api";
+
 import { Link } from "react-router-dom";
+import API from "../api/Api";
 
 export default function Bills() {
   const [bills, setBills] = useState([]);
@@ -26,7 +27,7 @@ export default function Bills() {
       if (filter.q && filter.q.trim() !== "") params.search = filter.q.trim();
 
       // axios helper `api.get('/bills', { params })` expected
-      const data = await api.get("/bills", { params });
+      const data = await API.get("/bills", { params });
       setBills(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -38,7 +39,7 @@ export default function Bills() {
   async function handleDelete(id) {
     if (!confirm("Are you sure you want to delete this bill?")) return;
     try {
-      await api.delete(`/bills/${id}`);
+      await API.delete(`/bills/${id}`);
       // remove locally
       setBills((prev) => prev.filter((b) => b._id !== id));
     } catch (err) {

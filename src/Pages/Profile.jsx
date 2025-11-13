@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import api from "../lib/api";
+import API from "../api/Api";
 
 export default function Profile() {
   const { user, logout } = useContext(AuthContext);
@@ -13,10 +13,9 @@ export default function Profile() {
     async function load() {
       try {
         setLoading(true);
-        const data = await api.get("/users/me");
-        setProfile(data);
+        const res = await API.get("/users/me"); // ✅ get response
+        setProfile(res.data); // ✅ use res.data
       } catch (err) {
-        // fallback to context user if request fails
         setError(err.response?.data?.message || err.message);
       } finally {
         setLoading(false);
